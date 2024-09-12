@@ -18,14 +18,14 @@
                   <form class="theme-form" action="{{Route('actionLogin')}}" method="POST">
                     @csrf
                      <h4 class="text-center">Stifar Parent</h4>
-                     <p class="text-center">Silahakan masukan email / password untuk login</p>
+                     <p class="text-center">Silahakan masukan Nim / password untuk login</p>
                      @if(session('error'))
                         <div class="alert alert-danger">
                             {{session('error')}}
                         </div>
                     @endif
                      <div class="form-group">
-                        <label class="col-form-label">Email Address</label>
+                        <label class="col-form-label">Nim</label>
                         <input class="form-control" type="text" name="nim" required="" placeholder="Test@gmail.com">
                      </div>
                      <div class="form-group">
@@ -38,15 +38,8 @@
                            <input id="checkbox1" type="checkbox">
                            <label class="text-muted" for="checkbox1">Remember password</label>
                         </div>
-                        <a class="link" href="#">Forgot password?</a>
                         <button class="btn btn-primary btn-block" type="submit">Sign in</button>
-
                      </div>
-                     {{-- <h6 class="text-muted mt-4 or">Or Sign in with</h6> --}}
-                     {{-- <div class="social mt-4">
-                        <div class="btn-showcase"><a class="btn btn-light" href="https://www.linkedin.com/login" target="_blank"><i class="txt-linkedin" data-feather="linkedin"></i> LinkedIn </a><a class="btn btn-light" href="https://twitter.com/login?lang=en" target="_blank"><i class="txt-twitter" data-feather="twitter"></i>twitter</a><a class="btn btn-light" href="https://www.facebook.com/" target="_blank"><i class="txt-fb" data-feather="facebook"></i>facebook</a></div>
-                     </div> --}}
-                   
                   </form>
                </div>
             </div>
