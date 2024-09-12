@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Krs;
 use App\Models\Prodi;
+use App\Models\Pegawai;
 use App\Models\Wilayah;
 use App\Models\Mahasiswa;
 use App\Models\UserParent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,62 +17,62 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $mhs = Auth::user(); // Data dari Mahasiswa
-        $nim = $mhs->nim;
+        // $mhs = Auth::user(); // Data dari Mahasiswa
+        // $nim = $mhs->nim;
+        $nim = 1032211001;
         $title = "Mahasiswa";
         $mahasiswa = Mahasiswa::where('nim', $nim)->first();
-        $program_studi = Prodi::all();
-        $prodi = [];
-        foreach ($program_studi as $row) {
-            $prodi[$row->id] = $row->nama_prodi;
-        }
-        $agama = array('1' => 'Islam', 'Kristen', 'Katolik', 'Hindu', 'Budha', 'Konghuchu', 'Lainnya');
-        $wilayah = Wilayah::where('id_induk_wilayah', '000000')->get();
+      
+        $dosenwali = Pegawai::where('id', $mahasiswa->id_dsn_wali)->select('nama')->first();
+        $totalsks = Krs::where('id_mhs', 1663)
+        ->join('master_jadwal AS jadwal', 'jadwal.id', '=', 'krs.id_jadwal')
+        ->join('master_mata_kuliah AS matkul', 'matkul.kode_mata_kuliah', '=', 'jadwal.kode_mata_kuliah')
+        ->select(DB::raw('SUM(matkul.jumlah_sks) as total_sks'))
+        ->value('total_sks');
 
-        $kota = [];
-        if ($mahasiswa->provinsi != 0 && !empty($mahasiswa->provinsi)) {
-            $kota = Wilayah::where('id_induk_wilayah', $mahasiswa->provinsi)->get();
-        }
+        $jadwalDosenWali  = Pegawai::where('pegawai.id', $mahasiswa->id_dsn_wali)
+        ->leftJoin('master_jadwal AS jadwal','jadwal.id_dosen','pegawai.id')
+        ->leftJoin('master_mata_kuliah AS mata_kuliah','jadwal.kode_mata_kuliah','mata_kuliah.kode_mata_kuliah')
+        ->select('mata_kuliah.nama_mata_kuliah AS matkul','mata_kuliah.kelompok_mata_kuliah AS kelompok','mata_kuliah.tp AS tp','jadwal.hari AS hari','jadwal.sesi AS jam','jadwal.ruang AS ruang')
+        // ->where('mata_kuliah.is_aktif',1)
+        ->get();
 
-        $kecamatan = [];
-        if ($mahasiswa->kecamatan != 0 && !empty($mahasiswa->kecamatan)) {
-            $kecamatan = Wilayah::where('id_induk_wilayah', $mahasiswa->kotakab)->get();
-        }
+        // dd($jadwalDosenWali);
+        
+        
+        $krsList = Krs::where('krs.id_mhs', 1663)
+        ->leftJoin('master_jadwal AS jadwal', 'jadwal.id', '=', 'krs.id_jadwal')
+        ->leftJoin('master_mata_kuliah AS matkul', 'matkul.kode_mata_kuliah', '=', 'jadwal.kode_mata_kuliah')
+        ->select(
+            'jadwal.hari AS hari',
+            'jadwal.status AS status',
+            'matkul.kelompok_mata_kuliah AS kelompok',
+            'jadwal.sesi AS sesi',
+            'jadwal.ruang AS ruang',
+            'matkul.nama_mata_kuliah AS matkul',
+            'matkul.jumlah_sks AS sks',
+            'krs.is_publish',
+            'matkul.is_aktif',
+            'matkul.tp'
+        )
+        // ->where('jadwal.status', 1)
+        ->get();
+    
+        // dd($krsList);
 
-        $status = array(
+        $jk = $mahasiswa->jk == 1 ? 'Laki-Laki' : ($mahasiswa->jk == 2 ? 'Perempuan' : '-');
+        $status = match($mahasiswa->status) {
             1 => 'aktif',
             2 => 'cuti',
             3 => 'Keluar',
             4 => 'lulus',
             5 => 'meninggal',
-            6 => 'DO'
-        );
-        $user = Mahasiswa::where('id', $mahasiswa->user_id)->first();
-
-        return view('dashboard', compact('user', 'status', 'kecamatan', 'wilayah', 'kota', 'title', 'mahasiswa', 'prodi', 'agama'));
+            6 => 'DO',
+            default => '-',
+        };
+        
+        return view('dashboard', compact( 'status','title', 'mahasiswa','jk','dosenwali','totalsks','krsList','jadwalDosenWali'));
     }
 
-    public function UpdatePassword(Request $request)
-    {
-        $nim = Auth::user()->nim;
-
-        $checkUser = UserParent::where('nim', $nim)->first();
-        if ($checkUser) {
-            UserParent::where('nim', $nim)->update([
-                'password' => Hash::make($request->password),
-            ]);
-
-            return response()->json('Password Berhasil Diperbarui');
-
-        } else {
-            UserParent::create(
-                [
-                    'nim' => $nim,
-                    'password' => Hash::make($request->password),
-                ]
-            );
-            return response()->json('Password Berhasil Ditambahkan');
-        }
-
-    }
+   
 }
