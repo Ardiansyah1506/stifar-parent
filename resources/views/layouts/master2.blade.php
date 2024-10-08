@@ -9,7 +9,7 @@
     <meta name="author" content="pixelstrap">
     <link rel="icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
     <link rel="shortcut icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
-    <title>Cuba - Premium Admin Template</title>
+    <title>Stifar Parent</title>
     <!-- Google font-->
     <link href="https://fonts.googleapis.com/css?family=Rubik:400,400i,500,500i,700,700i&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900&amp;display=swap" rel="stylesheet">
@@ -17,8 +17,8 @@
     @yield('style')
   </head>
   {{-- @dd(Route::current()->getName()); --}}
-  <body>
-    <!-- login page start-->
+  <body >
+    
     @yield('content')
     <!-- latest jquery-->
     @include('layouts.script')

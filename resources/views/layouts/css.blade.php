@@ -10,8 +10,6 @@
 <!-- Plugins css start-->
 @yield('css')
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/slick.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/slick-theme.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/scrollbar.css')}}">
 <!-- Bootstrap css-->
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/bootstrap.css')}}">
 <!-- App css-->

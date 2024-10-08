@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -17,7 +17,7 @@
     @yield('style')
   </head>
   {{-- @dd(Route::current()->getName()); --}}
-  <body @if(Route::current()->getName() == 'index') onload="startTime()" @elseif (Route::current()->getName() == 'button-builder') class="button-builder" @endif>
+  <body  @if(Route::current()->getName() == 'index') onload="startTime()" @elseif (Route::current()->getName() == 'button-builder') class="button-builder" @endif >
     <div class="loader-wrapper">
       <div class="loader-index"><span></span></div>
       <svg>
@@ -32,17 +32,16 @@
     <div class="tap-top"><i data-feather="chevrons-up"></i></div>
     <!-- tap on tap ends-->
     <!-- page-wrapper Start-->
-    <div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <div class="page-wrapper horizontal-wrapper" >
       <!-- Page Header Start-->
       @include('layouts.header')
       <!-- Page Header Ends  -->
       <!-- Page Body Start-->
-      <div class="page-body-wrapper">
+      <div class="page-body-wrapper mt-5">
         <!-- Page Sidebar Start-->
-        @include('layouts.sidebar')
+        {{-- @include('layouts.sidebar') --}}
         <!-- Page Sidebar Ends-->
-        <div class="page-body">
-        
+       
           <!-- Container-fluid starts-->
           @yield('content')
           <!-- Container-fluid Ends-->
@@ -56,11 +55,11 @@
     @include('layouts.script')  
     <!-- Plugin used-->
 
-    <script type="text/javascript">
+    {{-- <script type="text/javascript">
       if ($(".page-wrapper").hasClass("horizontal-wrapper")) {
             $(".according-menu.other" ).css( "display", "none" );
             $(".sidebar-submenu" ).css( "display", "block" );
       }
-    </script>
+    </script> --}}
   </body>
 </html>

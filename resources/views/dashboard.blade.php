@@ -8,17 +8,16 @@
 @section('style')
     <link rel="stylesheet" type="text/css" href="../assets/css/vendors/datatables.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatables.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/sweetalert2.css') }}">
 @endsection
 
 
 @section('content')
-    <div class="container-fluid">
+    <div class="container-fluid mt-5">
         <div class="edit-profile">
-            <div class="row">
+            <div class="container-fluid">
                 <div class="col-xl-12">
-                    <div class="card">
-                        <div class="card-header">
+                    <div class="card  mt-5">
+                        <div class="card-header mt-5">
                             <h4 class="card-title mb-0">My Profile</h4>
                             <div class="card-options"><a class="card-options-collapse" href="#"
                                     data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a><a
@@ -123,64 +122,47 @@
                             <div class="card-body">
                                 <div class="col-sm-12 col-lg-12 col-xl-12">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered">
+                                        <table class="table" id="tablekrs">
                                             <thead>
-                                                <tr class="text-center">
-                                                    <th rowspan="2" class="align-top">#</th>
-                                                    <th rowspan="2" class="align-top">Mata Kuliah </th>
-                                                    <th rowspan="2" class="align-top">Kelompok</th>
-                                                    <th rowspan="2" class="align-top">SKS</th>
-                                                    <th rowspan="2" class="align-top">Status</th>
-                                                    <th colspan="4">Jadwal</th>
-                                                </tr>
-                                                <tr class="text-center">
-                                                    <th>Hari/Jam</th>
-                                                    <th>Ruang</th>
-                                                    <th>Hari/Jam</th>
-                                                    <th>Ruang</th>
-                                                </tr>
-
+                                                <td>No.</td>
+                                                <td>Kode</td>
+                                                <td>Nama Matakuliah</td>
+                                                <td>Kelas</td>
+                                                <!-- <td>SKS</td> -->
+                                                <td>Hari, Waktu</td>
+                                                <td>Ruang</td>
+                                                <td>SKS</td>
                                             </thead>
                                             <tbody>
-                                                @if (count($krsList) > 0)
-                                                @foreach ($krsList as  $krs)
+                                                @php
+                                                    $total_krs = 0;
+                                                @endphp
+                                                @foreach($krsList as $krs)
                                                     <tr>
-                                                        <th scope="row">{{ $loop->iteration }}</th>
-                                                        <td>{{ $krs->matkul ?? '-' }}</td>
-                                                        <td>{{ $krs->kelompok ?? '-' }}</td>
-                                                        <td>{{ $krs->sks ?? '-' }}</td>
-                                                        <td>{{ $krs->status ?? '-' }}</td>
-                                                            @if($krs->tp === 't')
-                                                            <td>
-                                                                {{ !empty($krs->hari) && !empty($krs->sesi) ? $krs->hari . ', ' . $krs->sesi : '-' }}
-                                                            </td>
-                                                            
-                                                            <td>{{$krs->ruang ??  '-' }}</td>
-                                                                <td>-</td>
-                                                                <td>- </td>
-                                                            @else
-                                                                <td>-</td>
-                                                                <td>- </td>
-                                                                <td>
-                                                                    {{ !empty($krs->hari) && !empty($krs->sesi) ? $krs->hari . ', ' . $krs->sesi : '-' }}
-                                                                </td>
-                                                                <td>{{$krs->ruang ? $krs->ruang : '=' }}</td>
-                                                            @endif
-                                                        </tr>
-                                                        @endforeach
+                                                        <td>{{ $no++ }}</td>
+                                                        <td>{{ $krs['kode_matkul'] }}</td>
+                                                        <td>{{ $krs['nama_matkul'] }}</td>
+                                                        <td>{{ $krs['kel'] }}</td>
+                                                        <!-- <td>{{ $krs['sks_teori'] }}T/ {{ $krs['sks_praktek'] }}P</td> -->
+                                                        <td>{{ $krs['hari'] }}, {{ $krs['nama_sesi'] }}</td>
+                                                        <td>{{ $krs['nama_ruang'] }}</td>
+                                                        <td>{{ ($krs->sks_teori+$krs->sks_praktek) }}</td>
                                                       
-                                                @else
-                                                    <tr class="text-center">
-                                                        <td colspan="9">
-                                                            Data Kosong
-                                                        </td>
                                                     </tr>
-                                                
-                                                @endif
-
-
+                                                    @php
+                                                    $total_krs += ($krs->sks_teori+$krs->sks_praktek);
+                                                    @endphp
+                                                @endforeach
                                             </tbody>
-                                        </table>
+                                            <tfoot>
+                                                <tr>
+                                                    <th colspan=6 class="text-center">Total SKS</th>
+                                                    <th>{{$total_krs}}</th>
+                                                    <th></th>
+                                                    <th></th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>   
                                     </div>
                                 </div>
                             </div>
@@ -191,43 +173,12 @@
                             <h5 class="mb-0">
                                 <button class="btn btn-link collapsed ps-0" data-bs-toggle="collapse"
                                     data-bs-target="#collapseicon2" aria-expanded="false" aria-controls="collapseicon2"><i
-                                        data-feather="help-circle"></i> Presensi Semester Ini</button>
+                                        class="text-danger" data-feather="alert-circle"></i> Presensi Semester Ini </button>
                             </h5>
                         </div>
-                        <div class="collapse" id="collapseicon2" data-bs-parent="#accordionoc">
-                            <div class="card-body">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
-                                ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
-                                montes, nascetur ridiculus mus.</div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link collapsed ps-0" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseicon3" aria-expanded="false" aria-controls="collapseicon2"><i
-                                        data-feather="help-circle"></i>HASIL STUDI SEMESTER INI</button>
-                            </h5>
-                        </div>
-                        <div class="collapse" id="collapseicon3" data-bs-parent="#accordionoc">
-                            <div class="card-body">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
-                                ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
-                                montes, nascetur ridiculus mus.</div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link collapsed ps-0" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseicon4" aria-expanded="false"
-                                    aria-controls="collapseicon2"><i data-feather="help-circle"></i> HASIL STUDI SEMESTER
-                                    LALU</button>
-                            </h5>
-                        </div>
-                        <div class="collapse" id="collapseicon4" data-bs-parent="#accordionoc">
-                            <div class="card-body">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
-                                ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
-                                montes, nascetur ridiculus mus.</div>
-                        </div>
+                        {{-- <div class="collapse" id="collapseicon2" data-bs-parent="#accordionoc">
+                            
+                        </div> --}}
                     </div>
 
                     <div class="card">
@@ -235,15 +186,14 @@
                             <h5 class="mb-0">
                                 <button class="btn btn-link collapsed ps-0" data-bs-toggle="collapse"
                                     data-bs-target="#collapseicon5" aria-expanded="false"
-                                    aria-controls="collapseicon2"><i data-feather="help-circle"></i> TRANSKRIP
+                                    aria-controls="collapseicon2"><i
+                                    class="text-danger" data-feather="alert-circle"></i>  TRANSKRIP
                                     NILAI</button>
                             </h5>
                         </div>
-                        <div class="collapse" id="collapseicon5" data-bs-parent="#accordionoc">
-                            <div class="card-body">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
-                                ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
-                                montes, nascetur ridiculus mus.</div>
-                        </div>
+                        {{-- <div class="collapse" id="collapseicon5" data-bs-parent="#accordionoc">
+                          
+                        </div> --}}
                     </div>
 
                     <div class="card">
@@ -251,15 +201,13 @@
                             <h5 class="mb-0">
                                 <button class="btn btn-link collapsed ps-0" data-bs-toggle="collapse"
                                     data-bs-target="#collapseicon6" aria-expanded="false"
-                                    aria-controls="collapseicon2"><i data-feather="help-circle"></i> PRESENSI SEMESTER INI
+                                    aria-controls="collapseicon2"><i class="text-danger" data-feather="alert-circle"></i> PRESENSI SEMESTER INI
                                     WALI</button>
                             </h5>
                         </div>
-                        <div class="collapse" id="collapseicon6" data-bs-parent="#accordionoc">
-                            <div class="card-body">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
-                                ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
-                                montes, nascetur ridiculus mus.</div>
-                        </div>
+                        {{-- <div class="collapse" id="collapseicon6" data-bs-parent="#accordionoc">
+                           
+                        </div> --}}
                     </div>
 
                     <div class="card">
@@ -267,14 +215,12 @@
                             <h5 class="mb-0">
                                 <button class="btn btn-link collapsed ps-0" data-bs-toggle="collapse"
                                     data-bs-target="#collapseicon7" aria-expanded="false"
-                                    aria-controls="collapseicon2"><i data-feather="help-circle"></i> PEMBAYARAN</button>
+                                    aria-controls="collapseicon2"><i class="text-danger" data-feather="alert-circle"></i> PEMBAYARAN</button>
                             </h5>
                         </div>
-                        <div class="collapse" id="collapseicon7" data-bs-parent="#accordionoc">
-                            <div class="card-body">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
-                                ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
-                                montes, nascetur ridiculus mus.</div>
-                        </div>
+                        {{-- <div class="collapse" id="collapseicon7" data-bs-parent="#accordionoc">
+                       
+                        </div> --}}
                     </div>
 
                     <div class="card">
@@ -290,6 +236,7 @@
                             <div class="card-body">
                                 <div class="col-sm-12 col-lg-12 col-xl-12">
                                     <div class="table-responsive">
+                                   
                                         <table class="table table-bordered">
                                             <thead>
                                                 <tr class="text-center">
@@ -354,48 +301,29 @@
                         </div>
                     </div>
 
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link collapsed ps-0" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseicon9" aria-expanded="false"
-                                    aria-controls="collapseicon2"><i data-feather="help-circle"></i> TAGIHAN NON
-                                    REGULER</button>
-                            </h5>
-                        </div>
-                        <div class="collapse" id="collapseicon9" data-bs-parent="#accordionoc">
-                            <div class="card-body">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
-                                ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
-                                montes, nascetur ridiculus mus.</div>
-                        </div>
-                    </div>
 
                     <div class="card">
                         <div class="card-header">
                             <h5 class="mb-0">
                                 <button class="btn btn-link collapsed ps-0" data-bs-toggle="collapse"
                                     data-bs-target="#collapseicon10" aria-expanded="false"
-                                    aria-controls="collapseicon2"><i data-feather="help-circle"></i> JADWAL UJIAN</button>
+                                    aria-controls="collapseicon2"><i class="text-danger" data-feather="alert-circle"></i> JADWAL UJIAN</button>
                             </h5>
                         </div>
-                        <div class="collapse" id="collapseicon10" data-bs-parent="#accordionoc">
-                            <div class="card-body">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
-                                ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
-                                montes, nascetur ridiculus mus.</div>
-                        </div>
+                        {{-- <div class="collapse" id="collapseicon10" data-bs-parent="#accordionoc">
+                      
+                        </div> --}}
                     </div>
                     <div class="card">
                         <div class="card-header">
                             <h5 class="mb-0">
                                 <button class="btn btn-link collapsed ps-0" data-bs-toggle="collapse"
                                     data-bs-target="#collapseicon11" aria-expanded="false"
-                                    aria-controls="collapseicon2"><i data-feather="help-circle"></i> TUGAS AKHIR</button>
+                                    aria-controls="collapseicon2"><i class="text-danger" data-feather="alert-circle"></i> TUGAS AKHIR</button>
                             </h5>
                         </div>
                         <div class="collapse" id="collapseicon11" data-bs-parent="#accordionoc">
-                            <div class="card-body">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
-                                ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
-                                montes, nascetur ridiculus mus.</div>
+           
                         </div>
                     </div>
 
@@ -408,6 +336,5 @@
 @section('script')
     <script src="{{ asset('assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/js/datatable/datatables/datatable.custom.js') }}"></script>
-    <script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
 
 @endsection
